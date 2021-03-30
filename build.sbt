@@ -26,10 +26,7 @@ lazy val root = (project in file("."))
 lazy val expecty = (projectMatrix in file("."))
   .settings(
     name := "Expecty",
-    scalacOptions ++= {
-      if (scalaVersion.value startsWith "2.10") Nil
-      else Seq("-Yrangepos", "-feature", "-deprecation")
-    },
+    scalacOptions ++= Seq("-Yrangepos", "-feature", "-deprecation"),
     libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, _)) => Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
       case _            => Nil
