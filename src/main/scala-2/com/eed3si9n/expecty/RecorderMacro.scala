@@ -145,24 +145,37 @@ Instrumented AST: ${showRaw(instrumented)}")
       // don't record value of implicit "this" added by compiler; couldn't find a better way to detect implicit "this" than via point
       case Select(x @ This(_), y) if getPosition(expr).point == getPosition(x).point => expr
       case x: Select if x.symbol.isModule                                            => expr // don't try to record the value of packages
-      case _                                                                         => recordValue(recordSubValues(expr), expr)
+      case Apply(_, _) if expr.symbol.isImplicit                                     => recordSubValues(expr)
+      case _ =>
+        val sub = recordSubValues(expr)
+        val res = recordValue(sub, expr)
+        res
+
     }
 
-  private[this] def recordSubValues(expr: Tree): Tree =
+  private[this] def recordSubValues(expr: Tree): Tree = {
     expr match {
+      case Apply(Apply(x, y), z) if expr.symbol.isImplicit =>
+        // case for implicit extensions that have implicit parameters.
+        // Inner Apply is the application of the value the extension applies to.
+        // Outer Apply is the application of implicit parameters
+        Apply(Apply(x, y.map(recordAllValues)), z)
       case Apply(x, ys)     => Apply(recordAllValues(x), ys.map(recordAllValues))
       case TypeApply(x, ys) => TypeApply(recordSubValues(x), ys)
       case Select(x, y)     => Select(recordAllValues(x), y)
       case _                => expr
     }
 
-  private[this] def recordValue(expr: Tree, origExpr: Tree): Tree =
-    if (origExpr.tpe.typeSymbol.isType)
+  }
+
+  private[this] def recordValue(expr: Tree, origExpr: Tree): Tree = {
+    if (origExpr.tpe.typeSymbol.isType) {
       Apply(
         Select(Ident(termName(context)("$com_eed3si9n_expecty_recorderRuntime")), termName(context)("recordValue")),
         List(expr, Literal(Constant(getAnchor(origExpr))))
       )
-    else expr
+    } else expr
+  }
 
   private[this] def getSourceCode(expr: Tree): String = getPosition(expr).lineContent
 
