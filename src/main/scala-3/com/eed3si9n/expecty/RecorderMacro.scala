@@ -118,7 +118,7 @@ class RecorderMacro(using qctx0: Quotes) {
       ))
   }
 
-  private[this] def recordAllValues(runtime: Term, expr: Term): Term =
+  private[this] def recordAllValues(runtime: Term, expr: Term): Term = {
     expr match {
       case New(_)     => expr
       case Literal(_) => expr
@@ -128,10 +128,27 @@ class RecorderMacro(using qctx0: Quotes) {
       // case x: Select if x.symbol.isModule => expr // don't try to record the value of packages
       case _ => recordValue(runtime, recordSubValues(runtime, expr), expr)
     }
+  }
 
-  private[this] def recordSubValues(runtime: Term, expr: Term): Term =
+
+  private[this] def recordSubValues(runtime: Term, expr: Term): Term = {
     expr match {
-      case Apply(x, ys) =>
+      case Apply(a @ Apply(x, y), z) if isImplicitMethod(a) =>
+        // case for implicit extensions that have implicit parameters.
+        // Inner Apply is the application of the value the extension applies to.
+        // Outer Apply is the application of implicit parameters
+        try {
+          Apply(Apply(x, y.map(recordAllValues(runtime, _))), z)
+        } catch {
+          case e: AssertionError => expr
+        }
+      case a @ Apply(x, ys) if isImplicitMethod(a) =>
+        try {
+          Apply(x, ys.map(recordAllValues(runtime, _)))
+        } catch {
+          case e: AssertionError => expr
+        }
+      case a @ Apply(x, ys) =>
         try {
           Apply(recordAllValues(runtime, x), ys.map(recordAllValues(runtime, _)))
         } catch {
@@ -144,6 +161,11 @@ class RecorderMacro(using qctx0: Quotes) {
       case Repeated(xs, y)  => Repeated.copy(expr)(xs.map(recordAllValues(runtime, _)), y)
       case _                => expr
     }
+  }
+
+  private[this] def isImplicitMethod(t : Apply): Boolean = {
+    t.symbol.flags.is(Flags.Implicit)
+  }
 
   private[this] def recordValue(runtime: Term, expr: Term, origExpr: Term): Term = {
     // debug
@@ -174,6 +196,7 @@ class RecorderMacro(using qctx0: Quotes) {
       case Select(_, _) if skipSelect(expr.symbol) => expr
       case TypeApply(_, _) => expr
       case Ident(_) if skipIdent(expr.symbol) => expr
+      case a @ Apply(_, _) if isImplicitMethod(a) => expr
       case _ =>
         val tapply = recordValueSel.appliedToType(expr.tpe)
         Apply.copy(expr)(

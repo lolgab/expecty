@@ -43,4 +43,31 @@ object ExpectyTest extends verify.BasicTestSuite {
       assert1(name.endsWith("Expecty!"))
     }
   }
+
+  test("extensionClassWithImplicitParams") {
+    // Regression test for https://github.com/eed3si9n/expecty/issues/50
+    trait Eq[T] {
+      def eq(x: T, y: T): Boolean
+    }
+
+    object Eq {
+      implicit val eqInt: Eq[Int] = new Eq[Int] {
+        def eq(x: Int, y: Int) = (x - y) == 0
+      }
+    }
+
+    implicit class EqOps[T](i: T)(implicit eq: Eq[T]) {
+      def ===(other: T) = eq.eq(i, other)
+    }
+
+    assert1("abc".length() === 3)
+  }
+
+  test("extensionClassWithoutImplicitParams") {
+    implicit class EqOps[T](i: T) {
+      def ===(other: T) = i == other
+    }
+
+    assert1("abc".length() === 3)
+  }
 }

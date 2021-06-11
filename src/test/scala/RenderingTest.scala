@@ -378,6 +378,51 @@ and corrigible authority of this lies in our wills.                          |  
     }
   }
 
+  test("extension class with implicit parameters") {
+    // Regression test for https://github.com/eed3si9n/expecty/issues/50
+    trait Eq[T] {
+      def eq(x: T, y: T): Boolean
+    }
+
+    object Eq {
+      implicit val eqInt: Eq[Int] = new Eq[Int] {
+        def eq(x: Int, y: Int) = (x - y) == 0
+      }
+    }
+
+    implicit class EqOps[T](i: T)(implicit eq: Eq[T]) {
+      def ===(other: T) = eq.eq(i, other)
+    }
+
+    outputs("""assertion failed
+"abc".length() === 2
+      |        |
+      3        false
+      """) {
+      assert1 {
+        "abc".length() === 2
+      }
+    }
+  }
+
+  test("extension class without implicit parameters") {
+    // Regression test for https://github.com/eed3si9n/expecty/issues/50
+
+    implicit class EqOps[T](i: T) {
+      def ===(other: T) = i == other
+    }
+
+    outputs("""assertion failed
+"abc".length() === 2
+      |        |
+      3        false
+      """) {
+      assert1 {
+        "abc".length() === 2
+      }
+    }
+  }
+
   def outputs(rendering: String)(expectation: => Unit): Unit = {
     def normalize(s: String) = augmentString(s.trim()).linesIterator.toList.mkString
 
