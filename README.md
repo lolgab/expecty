@@ -11,9 +11,20 @@ Expecty is licensed under the Apache 2 license.
 
 ## Setup
 
+[![expecty Scala version support](https://index.scala-lang.org/eed3si9n/expecty/expecty/latest-by-scala-version.svg?color=orange)](https://index.scala-lang.org/eed3si9n/expecty/expecty)
+
 ```scala
-libraryDependencies += "com.eed3si9n.expecty" %% "expecty" % "0.15.1" % Test
+libraryDependencies += "com.eed3si9n.expecty" %% "expecty" % "<version (see above)>" % Test
 ```
+
+| Scala Version | JVM | JS (1.x) | Native (0.4.x) |
+| ------------- | :-: | :------: | :------------: |
+| 3.0.0         | ✅  |   ✅     |     n/a        |
+| 2.13.x        | ✅  |   ✅     |     ✅         |
+| 2.12.x        | ✅  |   ✅     |     ✅         |
+| 2.11.x        | ✅  |   ✅     |     ✅         |
+
+
 
 ## Code Examples
 
