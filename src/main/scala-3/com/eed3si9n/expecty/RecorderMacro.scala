@@ -69,7 +69,7 @@ class RecorderMacro(using qctx0: Quotes) {
     val line = Expr(pos.endLine)
 
     val path = pos.sourceFile.jpath
-    if (path != null){
+    if (path != null && path.getRoot() == pwd.getRoot()){
       val file = path.toFile
 
       val pathExpr = Expr(path.toString)
@@ -130,7 +130,7 @@ class RecorderMacro(using qctx0: Quotes) {
     }
   }
 
-  private[this] def isImplicitParameter(t: Term): Boolean = 
+  private[this] def isImplicitParameter(t: Term): Boolean =
     t.symbol.flags.is(Flags.Given) || t.symbol.flags.is(Flags.Implicit)
 
   private[this] def recordSubValues(runtime: Term, expr: Term): Term = {
@@ -152,10 +152,10 @@ class RecorderMacro(using qctx0: Quotes) {
         }
       case a @ Apply(x, ys) =>
         try {
-  
+
           if(ys.nonEmpty && ys.forall(isImplicitParameter))
             Apply(recordSubValues(runtime, x), ys)
-          else 
+          else
             Apply(recordSubValues(runtime, x), ys.map(recordAllValues(runtime, _)))
         } catch {
           case e: AssertionError => expr
