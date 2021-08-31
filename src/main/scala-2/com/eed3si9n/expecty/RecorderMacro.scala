@@ -209,6 +209,8 @@ Instrumented AST: ${showRaw(instrumented)}")
     val p = context.enclosingPosition.source.path
     val abstractFile = context.enclosingPosition.source.file
 
+    // Comparing roots to avoid the windows-specific edge case of relativisation crashing
+    // because the CWD and the source file are in two different drives (C:/ and D:/ for instance).
     val rp = if (!abstractFile.isVirtual && pwd.getRoot() == abstractFile.file.toPath.getRoot()) {
       pwd.relativize(abstractFile.file.toPath()).toString()
     } else p

@@ -69,6 +69,8 @@ class RecorderMacro(using qctx0: Quotes) {
     val line = Expr(pos.endLine)
 
     val path = pos.sourceFile.jpath
+    // Comparing roots to avoid the windows-specific edge case of relativisation crashing
+    // because the CWD and the source file are in two different drives (C:/ and D:/ for instance).
     if (path != null && path.getRoot() == pwd.getRoot()){
       val file = path.toFile
 
