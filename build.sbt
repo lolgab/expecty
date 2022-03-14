@@ -4,7 +4,7 @@ val scala213 = "2.13.8"
 val scala3 = "3.0.2"
 ThisBuild / scalaVersion := scala213
 Global / semanticdbEnabled := true
-Global / semanticdbVersion := "4.4.17"
+Global / semanticdbVersion := "4.5.0"
 
 lazy val verify = "com.eed3si9n.verify" %% "verify" % "1.0.0"
 
