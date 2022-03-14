@@ -19,7 +19,7 @@ libraryDependencies += "com.eed3si9n.expecty" %% "expecty" % "<version (see abov
 
 | Scala Version | JVM | JS (1.x) | Native (0.4.x) |
 | ------------- | :-: | :------: | :------------: |
-| 3.0.0         | ✅  |   ✅     |     n/a        |
+| 3.0           | ✅  |   ✅     |     n/a        |
 | 2.13.x        | ✅  |   ✅     |     ✅         |
 | 2.12.x        | ✅  |   ✅     |     ✅         |
 | 2.11.x        | ✅  |   ✅     |     ✅         |
@@ -29,7 +29,7 @@ libraryDependencies += "com.eed3si9n.expecty" %% "expecty" % "<version (see abov
 ## Code Examples
 
 ```scala
-Welcome to Scala 2.12.8 (OpenJDK 64-Bit Server VM, Java 1.8.0_212).
+Welcome to Scala 2.12.15 (OpenJDK 64-Bit Server VM, Java 1.8.0_212).
 Type in expressions for evaluation. Or try :help.
 
 scala> import com.eed3si9n.expecty.Expecty.assert
