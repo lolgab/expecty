@@ -1,10 +1,10 @@
 val scala211 = "2.11.12"
-val scala212 = "2.12.13"
-val scala213 = "2.13.5"
-val scala3 = "3.0.0"
+val scala212 = "2.12.15"
+val scala213 = "2.13.8"
+val scala3 = "3.0.2"
 ThisBuild / scalaVersion := scala213
 Global / semanticdbEnabled := true
-Global / semanticdbVersion := "4.4.17"
+Global / semanticdbVersion := "4.5.0"
 
 lazy val verify = "com.eed3si9n.verify" %% "verify" % "1.0.0"
 
@@ -39,7 +39,7 @@ lazy val expecty = (projectMatrix in file("."))
     settings = Seq(
       libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
       Test / unmanagedSourceDirectories ++= {
-        Seq((baseDirectory in LocalRootProject).value / "jvm" / "src" / "test" / "scala")
+        Seq((LocalRootProject / baseDirectory).value / "jvm" / "src" / "test" / "scala")
       },
     )
   )
