@@ -37,7 +37,7 @@ lazy val expecty = (projectMatrix in file("."))
   .jvmPlatform(
     scalaVersions = Seq(scala213, scala212, scala211, scala3),
     settings = Seq(
-      libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
+      libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.3" % Test,
       Test / unmanagedSourceDirectories ++= {
         Seq((baseDirectory in LocalRootProject).value / "jvm" / "src" / "test" / "scala")
       },
