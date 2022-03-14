@@ -39,7 +39,7 @@ lazy val expecty = (projectMatrix in file("."))
     settings = Seq(
       libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % Test,
       Test / unmanagedSourceDirectories ++= {
-        Seq((baseDirectory in LocalRootProject).value / "jvm" / "src" / "test" / "scala")
+        Seq((LocalRootProject / baseDirectory).value / "jvm" / "src" / "test" / "scala")
       },
     )
   )
