@@ -28,10 +28,6 @@ lazy val expecty = (projectMatrix in file("."))
   .settings(
     name := "Expecty",
     scalacOptions ++= Seq("-Yrangepos", "-feature", "-deprecation"),
-    scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-      case Some((3, _)) => Seq("-scala-output-version", "3.1")
-      case _            => Nil
-    }),
     libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, _)) => Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
       case _            => Nil
