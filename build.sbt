@@ -1,7 +1,8 @@
 val scala211 = "2.11.12"
 val scala212 = "2.12.15"
 val scala213 = "2.13.8"
-val scala3 = "3.0.2"
+val scala3 = "3.1.2"
+val scalaFull = Seq(scala213, scala212, scala211, scala3)
 ThisBuild / scalaVersion := scala213
 Global / semanticdbEnabled := true
 Global / semanticdbVersion := "4.5.0"
@@ -27,6 +28,10 @@ lazy val expecty = (projectMatrix in file("."))
   .settings(
     name := "Expecty",
     scalacOptions ++= Seq("-Yrangepos", "-feature", "-deprecation"),
+    scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((3, _)) => Seq("-scala-output-version", "3.1")
+      case _            => Nil
+    }),
     libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, _)) => Seq("org.scala-lang" % "scala-reflect" % scalaVersion.value)
       case _            => Nil
@@ -35,7 +40,7 @@ lazy val expecty = (projectMatrix in file("."))
     testFrameworks += new TestFramework("verify.runner.Framework"),
   )
   .jvmPlatform(
-    scalaVersions = Seq(scala213, scala212, scala211, scala3),
+    scalaVersions = scalaFull,
     settings = Seq(
       libraryDependencies += "com.github.sbt" % "junit-interface" % "0.13.3" % Test,
       Test / unmanagedSourceDirectories ++= {
@@ -43,8 +48,8 @@ lazy val expecty = (projectMatrix in file("."))
       },
     )
   )
-  .jsPlatform(scalaVersions = Seq(scala213, scala212, scala211, scala3))
-  .nativePlatform(scalaVersions = Seq(scala211, scala212, scala213))
+  .jsPlatform(scalaVersions = scalaFull)
+  .nativePlatform(scalaVersions = scalaFull)
 
 lazy val expecty3 = expecty
   .jvm(scala3)
