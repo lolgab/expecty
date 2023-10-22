@@ -32,8 +32,6 @@ jobs:
       uses: coursier/cache-action@v5
     - name: Build and test
       run: |
-        sudo apt-get update
-        sudo apt install clang libunwind-dev libgc-dev libre2-dev
         sbt -v scalafmtCheckAll
         sbt -v test
         rm -rf "$HOME/.ivy2/local" || true
